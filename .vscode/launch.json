@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "Go: gin-server",
+            "type": "go",
+            "mode": "debug",
+            "request": "launch",
+            "program": "${workspaceFolder}/app/main.go",
+            "args": [],
+            "env": {
+                "CONFIG_PATH": "${workspaceFolder}/config/local.env"
+            },
+        }
+    ]
+}
