@@ -14,7 +14,7 @@ type Repository struct {
 }
 
 func (r *Repository) AddSlugToUser(user_uuid uuid.UUID, add_slugs []string) (err error) {
-	const op = "interfaces.db.AddSlugToUser"
+	const op = "interfaces.database.AddSlugToUser"
 
 	// Check exising user
 	isExist, err := r.U.isUserExist(user_uuid)
@@ -43,14 +43,14 @@ func (r *Repository) AddSlugToUser(user_uuid uuid.UUID, add_slugs []string) (err
 	// Select slugs ids
 	slugs_ids, err := r.S.GetSlugsIds(add_slugs)
 	if err != nil {
-		log.Println("Error while scanning rows:", err)
+		log.Println("Error while getting slugss' ids", err)
 		return fmt.Errorf("%s: %s", op, err)
 	}
 
 	// Inserting slugs
 	err = r.S.InsertSlugsForUser(user_uuid, slugs_ids)
 	if err != nil {
-		log.Println("Error while scanning rows:", err)
+		log.Println("Error while inserting slugs for user:", err)
 		return fmt.Errorf("%s: %s", op, err)
 	}
 
@@ -58,13 +58,13 @@ func (r *Repository) AddSlugToUser(user_uuid uuid.UUID, add_slugs []string) (err
 }
 
 func (r *Repository) DeleteSlugsForUser(user_uuid uuid.UUID, delete_slugs []string) error {
-	const op = "interfaces.db.AddSlugToUser"
+	const op = "interfaces.database.DeleteSlugsForUser"
 
 	fmt.Println(user_uuid, delete_slugs, op)
 	// Check exising user
 	isExist, err := r.U.isUserExist(user_uuid)
 	if err != nil {
-		log.Println("Error while trying to call 'isUserExist'", err)
+		log.Println("Error while checking exising user ", err)
 		return fmt.Errorf("%s: %w", op, err)
 	}
 	if !isExist {
@@ -76,26 +76,26 @@ func (r *Repository) DeleteSlugsForUser(user_uuid uuid.UUID, delete_slugs []stri
 	isExist, err = r.S.isSlugsExist(delete_slugs)
 
 	if err != nil {
-		log.Println("Error while trying to call 'isSlugsExist'", err)
+		log.Println("Error while trying checking existing slugs", err)
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	if !isExist {
 		log.Println("There are no slugs (like add_slugs) in the database")
-		return fmt.Errorf("%s: %s", op, "Create slugs!")
+		return fmt.Errorf("%s: %s", op, "There are no your slugs")
 	}
 
 	// Select slugs ids
 	slugs_ids, err := r.S.GetSlugsIds(delete_slugs)
 	if err != nil {
-		log.Println("Error while scanning rows:", err)
+		log.Println("Error while gettings slugs' ids:", err)
 		return fmt.Errorf("%s: %s", op, err)
 	}
 
 	// Delete slugs
 	err = r.S.DeleteSlugsForUser(user_uuid, slugs_ids)
 	if err != nil {
-		log.Println("Error while scanning rows:", err)
+		log.Println("Error while deleting slug for users", err)
 		return fmt.Errorf("%s: %s", op, err)
 	}
 

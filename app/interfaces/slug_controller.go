@@ -21,32 +21,29 @@ func NewSlugController(repoInteractor *infrastructure.Repository) *SlugControlle
 }
 
 func (controller *SlugController) CreateSlug(c *gin.Context) {
-	op := "interfaces.slug_controller.CreateSlug"
-
 	var slugCreate core.SlugRequestAdd
 	if err := c.BindJSON(&slugCreate); err != nil {
-		log.Println("Error in CreateSlug", op)
+		log.Println("Error in CreateSlug", err)
 		c.Error(fmt.Errorf("Can't serialize your JSON"))
 		return
 	}
 	Id, err := controller.DbInteractor.S.CreateSlug(&slugCreate)
 	if err != nil {
-		log.Println("Error while create slug in database", op)
+		log.Println("Error while create slug in database", err)
 		c.Error(fmt.Errorf("Error while create slug in database"))
 		return
 	}
 	c.JSON(http.StatusCreated, Id)
 	return
 }
-func (controller *SlugController) DeleteSlug(c *gin.Context) {
-	op := "interfaces.slug_controller.DeleteSlug"
 
+func (controller *SlugController) DeleteSlug(c *gin.Context) {
 	slugName := c.Param("name")
 	fmt.Println(slugName)
 
 	err := controller.DbInteractor.S.DeleteSlugByName(slugName)
 	if err != nil {
-		log.Println("Error while deleting slug from database", op)
+		log.Println("Error while deleting slug from database", err)
 		c.Error(fmt.Errorf("Error while deleting slug from database"))
 		return
 	}

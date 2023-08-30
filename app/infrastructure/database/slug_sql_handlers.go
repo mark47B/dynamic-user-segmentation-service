@@ -20,7 +20,7 @@ func NewSlugRepository(connection *sql.DB) (*SlugRepository, error) {
 }
 
 func (s *SlugRepository) CreateSlug(slug *core.SlugRequestAdd) (slugID uint32, err error) {
-	const op = "interfaces.db.CreateSlug"
+	const op = "infrastructure.database.CreateSlug"
 
 	qry := `INSERT INTO public.slug (name) VALUES ($1) RETURNING id;`
 	_, err = s.db.Prepare(qry)
@@ -32,7 +32,6 @@ func (s *SlugRepository) CreateSlug(slug *core.SlugRequestAdd) (slugID uint32, e
 	err = s.db.QueryRow(qry, slug.Name).Scan(&slugID)
 	if err != nil {
 		log.Println("Error while executing insert user:", err)
-
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -40,24 +39,24 @@ func (s *SlugRepository) CreateSlug(slug *core.SlugRequestAdd) (slugID uint32, e
 }
 
 func (s *SlugRepository) DeleteSlugByName(slugName string) (err error) {
-	const op = "interfaces.db.Delete"
+	const op = "infrastructure.database.DeleteSlugByName"
 
 	qry := `DELETE FROM slug WHERE name = $1;`
 	_, err = s.db.Prepare(qry)
 	if err != nil {
-		log.Println("Error preparing deleting slug:", err)
+		log.Println("Error preparing DeleteSlugByName:", err)
 		return fmt.Errorf("%s: %w", op, err)
 	}
 	err = s.db.QueryRow(qry, slugName).Err()
 	if err != nil {
-		log.Println("Error while executing delete slug:", err)
+		log.Println("Error while executing DeleteSlugByName:", err)
 		return fmt.Errorf("%s: %w", op, err)
 	}
 	return
 }
 
 func (s *SlugRepository) isSlugsExist(sulgs []string) (bool, error) {
-	const op = "interfaces.db.isSlugsExist"
+	const op = "infrastructure.database.isSlugsExist"
 
 	var amount uint32
 	rows, err := s.db.Query(
@@ -66,7 +65,7 @@ func (s *SlugRepository) isSlugsExist(sulgs []string) (bool, error) {
 	rows.Next()
 	rows.Scan(&amount)
 	if err != nil {
-		log.Println("Error while trying to add slug to user(checking amount):", err)
+		log.Println("Error while slug existence check", err)
 		return false, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -77,7 +76,7 @@ func (s *SlugRepository) isSlugsExist(sulgs []string) (bool, error) {
 }
 
 func (s *SlugRepository) GetSlugsIds(slugs []string) (slugs_ids []uint32, err error) {
-	const op = "interfaces.db.GetSlugsIds"
+	const op = "infrastructure.database.GetSlugsIds"
 
 	rows, err := s.db.Query(`SELECT id FROM public."slug" WHERE name IN ('` + strings.Join(slugs, "','") + `')`)
 	defer rows.Close()
@@ -99,7 +98,7 @@ func (s *SlugRepository) GetSlugsIds(slugs []string) (slugs_ids []uint32, err er
 }
 
 func (s *SlugRepository) InsertSlugsForUser(user_uuid uuid.UUID, slugs_ids []uint32) (err error) {
-	const op = "interfaces.db.InsertSlugsForUser"
+	const op = "infrastructure.database.InsertSlugsForUser"
 
 	qry := `INSERT INTO public.user_slug (user_uuid, slug_id) VALUES ($1, $2);`
 	_, err = s.db.Prepare(qry)
@@ -119,7 +118,7 @@ func (s *SlugRepository) InsertSlugsForUser(user_uuid uuid.UUID, slugs_ids []uin
 }
 
 func (s *SlugRepository) DeleteSlugsForUser(user_uuid uuid.UUID, slugs_ids []uint32) (err error) {
-	const op = "interfaces.db.InsertSlugsForUser"
+	const op = "infrastructure.database.InsertSlugsForUser"
 
 	qry := `DELETE FROM public.user_slug WHERE user_uuid = $1 AND slug_id = $2;`
 	_, err = s.db.Prepare(qry)
@@ -138,7 +137,3 @@ func (s *SlugRepository) DeleteSlugsForUser(user_uuid uuid.UUID, slugs_ids []uin
 	}
 	return
 }
-
-// GetByUserUUID(user_uuid uuid.UUID) (slugOut core.Slug, err error)
-// GetByID(slug_id uint32)
-// GetAll() (slugs []core.Slug, amount int, err error)

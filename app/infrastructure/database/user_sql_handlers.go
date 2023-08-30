@@ -220,9 +220,3 @@ func (u *UserRepository) isUserExist(user_uuid uuid.UUID) (bool, error) {
 
 	return true, nil
 }
-
-// func (user_uuid uuid.UUID, delete_slugs []core.Slug)
-
-// func (u *UserRepository) DeleteByUUID(id string) (err error) {
-// 	return
-// }

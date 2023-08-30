@@ -27,7 +27,7 @@ func GetConnectionToDB(storageInfo settings.Database) (connection *sql.DB, err e
 
 		err = CreateTables(connection)
 		if err != nil {
-			log.Fatal("Connection Error:", err)
+			log.Fatal("Table create Error:", err)
 			return nil, err
 		}
 		err = connection.Ping()
