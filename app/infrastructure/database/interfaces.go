@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"dynamic-user-segmentation-service/core"
@@ -11,6 +11,7 @@ type IUser interface {
 	isUserExist(user_uuid uuid.UUID) (bool, error)
 	AddSlugToUser(user_uuid uuid.UUID, add_slugs []string)
 	DeleteSlugToUser(user_uuid uuid.UUID, delete_slugs []core.Slug)
+	SelectSlugsIdsForUser(user_uuid uuid.UUID) (slugs_ids []uint32, err error)
 	// GetAll() (users []core.User, amount int, err error)
 	CreateUser(user *core.UserRequestCreate) (user_uuid uuid.UUID, err error)
 	DeleteByUUID(user_uuid uuid.UUID) (err error)
@@ -33,5 +34,5 @@ type ISlug interface {
 
 type IRepository interface {
 	InsertSlugsForUser(user_uuid uuid.UUID, slugs_ids []uint32) (err error)
-	DeleteSlugsForUSer(delete_slugs []string, user_uuid uuid.UUID) error
+	DeleteSlugsForUser(user_uuid uuid.UUID, delete_slugs []string) error
 }

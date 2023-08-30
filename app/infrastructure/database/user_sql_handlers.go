@@ -1,10 +1,12 @@
-package db
+package database
 
 import (
 	"database/sql"
 	"dynamic-user-segmentation-service/core"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -17,6 +19,68 @@ type UserRepository struct {
 
 func NewUserRepository(connection *sql.DB) (*UserRepository, error) {
 	return &UserRepository{db: connection}, nil
+}
+
+func (u *UserRepository) SelectSlugsIdsForUser(user_uuid uuid.UUID) (slugs_ids []uint32, err error) {
+	op := "infrastucture.database.GetSlugsIdsForUser"
+
+	qry := `SELECT id from public.user_slug WHERE user_uuid = $1 `
+
+	rows, err := u.db.Query(qry, user_uuid)
+	defer rows.Close()
+	if err != nil {
+		log.Println("Error while trying to get user's slugs_ids:", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	for rows.Next() {
+		var ID uint32
+		err := rows.Scan(&ID)
+		if err != nil {
+			log.Println("Error while scanning rows:", err)
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		slugs_ids = append(slugs_ids, ID)
+	}
+	return
+}
+
+func (u *UserRepository) SelectUserSlugsByUUID(user_uuid uuid.UUID) (user_slugs []core.Slug, err error) {
+	op := "infrastructure.database.SelectUserSlugsByUUID"
+
+	user_slugs_ids, err := u.SelectSlugsIdsForUser(user_uuid)
+	user_slugs_ids_str := *new([]string)
+	for _, val := range user_slugs_ids {
+		user_slugs_ids_str = append(user_slugs_ids_str, strconv.FormatUint(uint64(val), 10))
+	}
+
+	if err != nil {
+		log.Println("Error while trying Select Slugs Ids For User", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	rows, err := u.db.Query(`SELECT id, name from public.user_slug WHERE id IN ('` + strings.Join(user_slugs_ids_str, "','") + `')`)
+	defer rows.Close()
+	if err != nil {
+		log.Println("Error while trying to get slug name", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	for rows.Next() {
+		var ID uint32
+		var slug_name string
+		err := rows.Scan(&ID, &slug_name)
+		if err != nil {
+			log.Println("Error while scanning rows:", err)
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		NewSlug := core.Slug{
+			ID:   ID,
+			Name: slug_name,
+		}
+		user_slugs = append(user_slugs, NewSlug)
+	}
+	return
 }
 
 // TODO: Decompose
@@ -65,7 +129,6 @@ func (u *UserRepository) GetUserByUUID(user_uuid uuid.UUID) (*core.User, error) 
 	}
 
 	for rows.Next() {
-		fmt.Println(rows)
 		var ID uint32
 		var slug_name string
 		err := rows.Scan(&ID, &slug_name)
@@ -87,9 +150,38 @@ func (u *UserRepository) GetUserByUUID(user_uuid uuid.UUID) (*core.User, error) 
 	}, nil
 }
 
-// func (u *UserRepository) GetAll() (users []core.User, amount int, err error) {
-// 	return users, 3, nil
-// }
+func (u *UserRepository) GetAll() (users []core.User, err error) {
+	op := "infrastructure.database.GetApp"
+
+	qry := `SELECT public.user.user_uuid, public.user.username, public.slug.id, public.slug.name 
+			FROM public.user
+			LEFT JOIN public.user_slug ON public.user.user_uuid = public.user_slug.user_UUID 
+			LEFT JOIN public.slug ON public.user_slug.slug_id = public.slug.id 
+			ORDER BY public.user.user_uuid`
+
+	rows, err := u.db.Query(qry)
+	defer rows.Close()
+	if err != nil {
+		log.Println("Error while extracting all users:", err)
+
+		return users, fmt.Errorf("%s: %w", op, err)
+	}
+
+	for rows.Next() {
+		var (
+			user_uuid      uuid.UUID
+			username, name string
+			ID             uint32
+		)
+		rows.Scan(&user_uuid, &username, &ID, &name)
+		if len(users) != 0 && users[len(users)-1].UUID == user_uuid {
+			users[len(users)-1].Slugs = append(users[len(users)-1].Slugs, core.Slug{ID: ID, Name: name})
+		} else {
+			users = append(users, core.User{UUID: user_uuid, Username: username, Slugs: []core.Slug{{ID: ID, Name: name}}})
+		}
+	}
+	return
+}
 
 func (u *UserRepository) CreateUser(user core.UserRequestCreate) (user_uuid uuid.UUID, err error) {
 	const op = "interfaces.db.GetUserByUUID"

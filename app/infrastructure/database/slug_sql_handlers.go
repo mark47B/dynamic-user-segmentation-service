@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"database/sql"
@@ -129,6 +129,7 @@ func (s *SlugRepository) DeleteSlugsForUser(user_uuid uuid.UUID, slugs_ids []uin
 	}
 
 	for _, val := range slugs_ids {
+		fmt.Println(user_uuid, val, op)
 		_, err = s.db.Exec(qry, user_uuid, val)
 		if err != nil {
 			log.Println("Error while executing delete slug:", err)

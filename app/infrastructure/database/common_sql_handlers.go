@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"fmt"
@@ -57,9 +57,10 @@ func (r *Repository) AddSlugToUser(user_uuid uuid.UUID, add_slugs []string) (err
 	return
 }
 
-func (r *Repository) DeleteSlugsForUSer(delete_slugs []string, user_uuid uuid.UUID) error {
+func (r *Repository) DeleteSlugsForUser(user_uuid uuid.UUID, delete_slugs []string) error {
 	const op = "interfaces.db.AddSlugToUser"
 
+	fmt.Println(user_uuid, delete_slugs, op)
 	// Check exising user
 	isExist, err := r.U.isUserExist(user_uuid)
 	if err != nil {

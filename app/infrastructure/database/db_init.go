@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"database/sql"
@@ -53,14 +53,12 @@ func CreateTables(db *sql.DB) (err error) {
 		PRIMARY KEY (user_uuid)
 	);
 
-
 	CREATE TABLE IF NOT EXISTS public.slug(
 		id SERIAL,
 		name VARCHAR(255) NOT NULL UNIQUE,
 		PRIMARY KEY (id)
 	);
 	CREATE INDEX IF NOT EXISTS idx_slug_id ON public.slug(id);
-
 
 	CREATE TABLE IF NOT EXISTS public.user_slug
 	(

@@ -1,6 +1,10 @@
 package core
 
 type Slug struct {
-	ID   uint32 `json:"id" gorm:"primary_key"`
+	ID   uint32 `json:"id"`
+	Name string `json:"name"`
+}
+
+type SlugRequestAdd struct {
 	Name string `json:"name"`
 }
