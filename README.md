@@ -59,7 +59,7 @@ DELETE /api/v1/slug/:name
 #### Base task
 1. Create Slug
     ```bash
-    curl http://localhost:8080/api/v1/slug \
+    curl http://localhost:8080/api/v1/slug/ \
     --include --header "Content-Type: application/json" \
     --request "POST" --data \
     '{"name": "AVITO_TEST_SLUG"}'
@@ -72,14 +72,15 @@ DELETE /api/v1/slug/:name
     --request "DELETE"
     ```
     
-3. Add User to Slug
+3. Change User's slugs
+Firstly exec DELETE and after delete ADD
     ```bash
     curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f \
     --include --header "Content-Type: application/json" \
     --request "PUT" --data \
     '{"delete_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"], "add_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"]}'
     ```
-4. Get active Slugs for User
+5. Get active Slugs for User
     ```bash
     curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f/slugs \
     --include --header "Content-Type: application/json" \
@@ -95,13 +96,13 @@ DELETE /api/v1/slug/:name
     ```
 2. Get all users
     ```bash
-    curl http://localhost:8080/api/v1/user \
+    curl http://localhost:8080/api/v1/user/ \
     --include --header "Content-Type: application/json" \
     --request "GET"
     ```
 3. Create user
     ```bash
-    curl http://localhost:8080/api/v1/user \
+    curl http://localhost:8080/api/v1/user/ \
     --include --header "Content-Type: application/json" \
     --request "POST" --data \
     '{"username": "Alexandr"}'
