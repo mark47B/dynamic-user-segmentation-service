@@ -1,11 +1,7 @@
 package settings
 
 import (
-	"log"
 	"os"
-	"time"
-
-	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Database struct {
@@ -17,10 +13,8 @@ type Database struct {
 }
 
 type Server struct {
-	ENV            string        `env:"ENV" env-default:"local"`
-	SERVER_ADDRESS string        `env:"SERVER_ADDRESS" env-default:"localhost:8080"`
-	SERVER_TIMEOUT time.Duration `env:"SERVER_TIMEOUT" env-default:"4s"`
-	IDLE_TIMEOUT   time.Duration `env:"IDLE_TIMEOUT" env-default:"60s"`
+	ENV            string `env:"ENV" env-default:"local"`
+	SERVER_ADDRESS string `env:"SERVER_ADDRESS" env-default:"localhost:8080"`
 }
 
 type Settings struct {
@@ -30,21 +24,15 @@ type Settings struct {
 }
 
 func MustLoad() *Settings {
-	configPath := os.Getenv("CONFIG_PATH")
-	if configPath == "" {
-		log.Fatal("CONFIG_PATH is not set")
-	}
-
-	// check if file exists
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Fatalf("config file does not exist: %s", configPath)
-	}
-
 	var cfg Settings
+	cfg.Server.ENV = os.Getenv("ENV")
+	cfg.Server.SERVER_ADDRESS = os.Getenv("SERVER_ADDRESS")
 
-	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
-		log.Fatalf("cannot read config: %s", err)
-	}
+	cfg.Database.POSTGRES_HOST = os.Getenv("POSTGRES_HOST")
+	cfg.Database.POSTGRES_USER = os.Getenv("POSTGRES_USER")
+	cfg.Database.POSTGRES_PASSWORD = os.Getenv("POSTGRES_PASSWORD")
+	cfg.Database.POSTGRES_PORT = os.Getenv("POSTGRES_PORT")
+	cfg.Database.POSTGRES_DB_NAME = os.Getenv("POSTGRES_DB_NAME")
 
 	return &cfg
 }
