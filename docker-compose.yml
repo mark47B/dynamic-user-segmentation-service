@@ -4,6 +4,19 @@ services:
     build: ./app/
     container_name: api
     restart: always
+    environment:
+      - ENV=${POSTGRES_CONTAINER_NAME}
+      - POSTGRES_HOST=${POSTGRES_CONTAINER_NAME}
+      - POSTGRES_CONTAINER_NAME=${POSTGRES_CONTAINER_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB_NAME=${POSTGRES_DB_NAME}
+      - SERVER_PORT=${SERVER_PORT}
+    env_file:
+      - ./config/local.env
+    ports:
+      - ${SERVER_PORT}:8080
     networks:
       - pg-network
     depends_on:
@@ -29,7 +42,7 @@ services:
     image: adminer
     container_name: 'adminer'
     env_file:
-      - config/local.env
+      - ./config/local.env
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_CONTAINER_NAME}:${POSTGRES_PORT}/${POSTGRES_DB_NAME}?sslmode=disable
     ports:

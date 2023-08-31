@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine
+FROM golang:1.18-alpine AS builder
 
 WORKDIR /app
 
@@ -15,8 +15,8 @@ FROM alpine:latest
 RUN apk update && apk upgrade && \
     apk add --no-cache make
 
+WORKDIR /app
 COPY --from=builder /app/app /app/app
-
 EXPOSE 8080
 
-CMD ["/app/app"]
+CMD ["./app"]
