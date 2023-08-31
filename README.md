@@ -2,12 +2,10 @@
 
 ## Common app schema
 
-Database: PostgreSQL
-Database gui: adminer
-Web-framework: Gin
+Database: PostgreSQL \
+Database gui: adminer \
+Web-framework: Gin 
 
-
-Common shema
 
 ![image](https://github.com/mark47B/dynamic-user-segmentation-service/assets/43784470/79c8d544-3d6e-49ae-961f-e5ec9ca6e86f)
 
