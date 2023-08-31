@@ -65,6 +65,20 @@ DELETE /api/v1/slug/:name
     '{"name": "AVITO_TEST_SLUG"}'
     ```
 
+   ```bash
+    curl http://localhost:8080/api/v1/slug/ \
+    --include --header "Content-Type: application/json" \
+    --request "POST" --data \
+    '{"name": "AVITO_VOICE_MESSAGES"}'
+    ```
+
+   ```bash
+    curl http://localhost:8080/api/v1/slug/ \
+    --include --header "Content-Type: application/json" \
+    --request "POST" --data \
+    '{"name": "AVITO_PERFORMANCE_VAS"}'
+    ```
+
 2. Delete Slug
     ```bash
     curl http://localhost:8080/api/v1/slug/AVITO_TEST_SLUG \
@@ -73,16 +87,22 @@ DELETE /api/v1/slug/:name
     ```
     
 3. Change User's slugs
-Firstly exec DELETE and after delete ADD
     ```bash
-    curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f \
+    curl http://localhost:8080/api/v1/user/83f31292-dca2-4870-87aa-76d21c750739 \
     --include --header "Content-Type: application/json" \
     --request "PUT" --data \
-    '{"delete_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"], "add_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"]}'
+    '{"delete_slugs": [], "add_slugs": ["AVITO_PERFORMANCE_VAS", "AVITO_TEST_SLUG", "AVITO_VOICE_MESSAGES"]}'
+    ```
+
+   ```bash
+    curl http://localhost:8080/api/v1/user/83f31292-dca2-4870-87aa-76d21c750739 \
+    --include --header "Content-Type: application/json" \
+    --request "PUT" --data \
+    '{"delete_slugs": ["AVITO_PERFORMANCE_VAS"], "add_slugs": []}'
     ```
 5. Get active Slugs for User
     ```bash
-    curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f/slugs \
+    curl http://localhost:8080/api/v1/user/{UUID}/slugs \
     --include --header "Content-Type: application/json" \
     --request "GET"
     ```
@@ -90,7 +110,7 @@ Firstly exec DELETE and after delete ADD
 #### Additioonal API features
 1. Get user by UUID
     ```bash
-    curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f \
+    curl http://localhost:8080/api/v1/user/{UUID} \
     --include --header "Content-Type: application/json" \
     --request "GET"
     ```
@@ -107,6 +127,7 @@ Firstly exec DELETE and after delete ADD
     --request "POST" --data \
     '{"username": "Alexandr"}'
     ```
+    Response: UUID
 
 
 
