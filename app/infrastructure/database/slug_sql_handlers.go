@@ -60,7 +60,8 @@ func (s *SlugRepository) isSlugsExist(sulgs []string) (bool, error) {
 
 	var amount uint32
 	rows, err := s.db.Query(
-		`SELECT COUNT("name") FROM public."slug" WHERE "name" IN ('` + strings.Join(sulgs, "','") + `')`)
+		`SELECT COUNT("name") FROM public."slug" WHERE name IN ('` + strings.Join(sulgs, "','") + `')`)
+	fmt.Println(`('` + strings.Join(sulgs, "','") + `')`)
 	defer rows.Close()
 	rows.Next()
 	rows.Scan(&amount)
@@ -128,7 +129,6 @@ func (s *SlugRepository) DeleteSlugsForUser(user_uuid uuid.UUID, slugs_ids []uin
 	}
 
 	for _, val := range slugs_ids {
-		fmt.Println(user_uuid, val, op)
 		_, err = s.db.Exec(qry, user_uuid, val)
 		if err != nil {
 			log.Println("Error while executing delete slug:", err)

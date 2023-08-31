@@ -37,7 +37,7 @@ func (r *Repository) AddSlugToUser(user_uuid uuid.UUID, add_slugs []string) (err
 
 	if !isExist {
 		log.Println("There are no slugs (like add_slugs) in the database")
-		return fmt.Errorf("%s: %s", op, "Create slugs!")
+		return nil
 	}
 
 	// Select slugs ids
@@ -60,7 +60,6 @@ func (r *Repository) AddSlugToUser(user_uuid uuid.UUID, add_slugs []string) (err
 func (r *Repository) DeleteSlugsForUser(user_uuid uuid.UUID, delete_slugs []string) error {
 	const op = "interfaces.database.DeleteSlugsForUser"
 
-	fmt.Println(user_uuid, delete_slugs, op)
 	// Check exising user
 	isExist, err := r.U.isUserExist(user_uuid)
 	if err != nil {
@@ -82,7 +81,7 @@ func (r *Repository) DeleteSlugsForUser(user_uuid uuid.UUID, delete_slugs []stri
 
 	if !isExist {
 		log.Println("There are no slugs (like add_slugs) in the database")
-		return fmt.Errorf("%s: %s", op, "There are no your slugs")
+		return nil
 	}
 
 	// Select slugs ids

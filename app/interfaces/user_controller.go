@@ -48,6 +48,25 @@ func (controller *UserController) SelectUserSlugsByUUID(c *gin.Context) {
 	return
 }
 
+func (controller *UserController) CreateUser(c *gin.Context) {
+	var userData core.UserRequestCreate
+
+	if err := c.BindJSON(&userData); err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Error while binding JSON"})
+		return
+	}
+
+	user_uuid, err := controller.DbInteractor.U.CreateUser(userData)
+	if err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Error while creating User"})
+		return
+	}
+	c.IndentedJSON(http.StatusCreated, user_uuid)
+	return
+
+}
 func (controller *UserController) GetAllUsers(c *gin.Context) {
 	users := *new([]core.User)
 	users, err := controller.DbInteractor.U.GetAll()
@@ -73,18 +92,21 @@ func (controller *UserController) ChangeUserSlugs(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Error while binding JSON"})
 		return
 	}
-	err = controller.DbInteractor.DeleteSlugsForUser(user_uuid, userChangeInfo.Delete_slugs)
-	if err != nil {
-		log.Println(err)
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Error while deleteing slugs for user"})
-		return
+	if len(userChangeInfo.Delete_slugs) != 0 {
+		err = controller.DbInteractor.DeleteSlugsForUser(user_uuid, userChangeInfo.Delete_slugs)
+		if err != nil {
+			log.Println(err)
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Error while deleteing slugs for user"})
+			return
+		}
 	}
-
-	err = controller.DbInteractor.AddSlugToUser(user_uuid, userChangeInfo.Add_slugs)
-	if err != nil {
-		log.Println(err)
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Error while adding slugs for user"})
-		return
+	if len(userChangeInfo.Add_slugs) != 0 {
+		err = controller.DbInteractor.AddSlugToUser(user_uuid, userChangeInfo.Add_slugs)
+		if err != nil {
+			log.Println(err)
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Error while adding slugs for user"})
+			return
+		}
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "Successfully deleted and added slugs"})
 	return

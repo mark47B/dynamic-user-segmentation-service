@@ -24,7 +24,7 @@ func initUserEndpoints(router *gin.RouterGroup, db_interactor *database.Reposito
 		userRoutes.GET("/:uuid/slugs", userController.SelectUserSlugsByUUID)
 		userRoutes.PUT("/:uuid", userController.ChangeUserSlugs)
 		userRoutes.GET("/", userController.GetAllUsers)
-		// userRoutes.POST("/", createUser)
+		userRoutes.POST("/", userController.CreateUser)
 	}
 }
 
