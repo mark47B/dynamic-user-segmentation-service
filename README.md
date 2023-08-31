@@ -3,7 +3,11 @@
 ## Common app schema
 
 Database: PostgreSQL
+Database gui: adminer
 Web-framework: Gin
+
+
+Common shema
 
 ![image](https://github.com/mark47B/dynamic-user-segmentation-service/assets/43784470/79c8d544-3d6e-49ae-961f-e5ec9ca6e86f)
 
@@ -45,36 +49,64 @@ All available API
 GET    /api/v1/user/:uuid
 GET    /api/v1/user/:uuid/slugs  
 PUT    /api/v1/user/:uuid     
-GET    /api/v1/user/             
+GET    /api/v1/user/
+POST   /api/v1/user/ 
 POST   /api/v1/slug/
 DELETE /api/v1/slug/:name
 ```
 
 ### Curl commands
+#### Base task
+1. Create Slug
+    ```bash
+    curl http://localhost:8080/api/v1/slug/ \
+    --include --header "Content-Type: application/json" \
+    --request "POST" --data \
+    '{"name": "AVITO_TEST_SLUG"}'
+    ```
 
-```bash
-curl http://localhost:8080/api/v1/slug/AVITO_PERFORMANCE_VAS \
---include --header "Content-Type: application/json" \
---request "DELETE"
-```
+2. Delete Slug
+    ```bash
+    curl http://localhost:8080/api/v1/slug/AVITO_TEST_SLUG \
+    --include --header "Content-Type: application/json" \
+    --request "DELETE"
+    ```
+    
+3. Change User's slugs
+Firstly exec DELETE and after delete ADD
+    ```bash
+    curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f \
+    --include --header "Content-Type: application/json" \
+    --request "PUT" --data \
+    '{"delete_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"], "add_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"]}'
+    ```
+5. Get active Slugs for User
+    ```bash
+    curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f/slugs \
+    --include --header "Content-Type: application/json" \
+    --request "GET"
+    ```
 
-```bash
-curl http://localhost:8080/api/v1/slug \
---include --header "Content-Type: application/json" \
---request "POST" --data \
-'{"name": "AVITO_TEST_SLUG"}'
-```
+#### Additioonal API features
+1. Get user by UUID
+    ```bash
+    curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f \
+    --include --header "Content-Type: application/json" \
+    --request "GET"
+    ```
+2. Get all users
+    ```bash
+    curl http://localhost:8080/api/v1/user/ \
+    --include --header "Content-Type: application/json" \
+    --request "GET"
+    ```
+3. Create user
+    ```bash
+    curl http://localhost:8080/api/v1/user/ \
+    --include --header "Content-Type: application/json" \
+    --request "POST" --data \
+    '{"username": "Alexandr"}'
+    ```
 
 
-```bash
-curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f \
---include --header "Content-Type: application/json" \
---request "GET"
-```
 
-```bash
-curl http://localhost:8080/api/v1/user/a0634d91-f178-4e86-9ddb-d1d5f6cacb5f \
---include --header "Content-Type: application/json" \
---request "PUT" --data \
-'{"UUID": "a0634d91-f178-4e86-9ddb-d1d5f6cacb5f","delete_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"], "add_slugs": ["AVITO_DISCOUNT_10", "AVITO_PERFORMANCE_VAS"]}'
-```
