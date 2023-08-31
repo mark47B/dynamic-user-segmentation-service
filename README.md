@@ -67,10 +67,9 @@ DELETE /api/v1/slug/:name
 
 2. Delete Slug
     ```bash
-    curl http://localhost:8080/api/v1/slug \
+    curl http://localhost:8080/api/v1/slug/AVITO_TEST_SLUG \
     --include --header "Content-Type: application/json" \
-    --request "POST" --data \
-    '{"name": "AVITO_TEST_SLUG"}'
+    --request "DELETE"
     ```
     
 3. Add User to Slug
@@ -104,9 +103,8 @@ DELETE /api/v1/slug/:name
     ```bash
     curl http://localhost:8080/api/v1/user \
     --include --header "Content-Type: application/json" \
-        --request "POST" --data \
-        '{"username": "Alexandr"}'
-        ```
+    --request "POST" --data \
+    '{"username": "Alexandr"}'
     ```
 
 
