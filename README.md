@@ -35,7 +35,7 @@ adminer is available at http://0.0.0.0:8091
 > Password: 1234 </br>
 > Database: database </br>
 
-#### Shema: 
+#### Schema: 
 ![image](https://github.com/mark47B/dynamic-user-segmentation-service/assets/43784470/294ec6b0-0da2-4ce8-8bbf-3bdd4a811e7e)
 
 ### API
@@ -105,7 +105,7 @@ DELETE /api/v1/slug/:name
     --request "GET"
     ```
 
-#### Additioonal API features
+#### Additional API features
 1. Get user by UUID
     ```bash
     curl http://localhost:8080/api/v1/user/{UUID} \
