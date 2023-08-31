@@ -47,24 +47,24 @@ func CreateTables(db *sql.DB) (err error) {
 	BEGIN;
 	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-	CREATE TABLE IF NOT EXISTS public.user(
+	CREATE TABLE IF NOT EXISTS public."user"(
 		user_uuid UUID DEFAULT uuid_generate_v4(),
 		username VARCHAR(255),
 		PRIMARY KEY (user_uuid)
 	);
 
-	CREATE TABLE IF NOT EXISTS public.slug(
+	CREATE TABLE IF NOT EXISTS public."slug"(
 		id SERIAL,
 		name VARCHAR(255) NOT NULL UNIQUE,
 		PRIMARY KEY (id)
 	);
 	CREATE INDEX IF NOT EXISTS idx_slug_id ON public.slug(id);
 
-	CREATE TABLE IF NOT EXISTS public.user_slug
+	CREATE TABLE IF NOT EXISTS public."user_slug"
 	(
 		id BIGSERIAL PRIMARY KEY,
-		user_uuid UUID NOT NULL REFERENCES public."user".user_uuid ON DELETE CASCADE,
-		slug_id INTEGER NOT NULL REFERENCES public.slug.id ON DELETE CASCADE,
+		user_uuid UUID NOT NULL REFERENCES public.user(user_uuid) ON DELETE CASCADE,
+		slug_id INTEGER NOT NULL REFERENCES public.slug(id) ON DELETE CASCADE,
 		UNIQUE (user_uuid, slug_id)
 	);
 
